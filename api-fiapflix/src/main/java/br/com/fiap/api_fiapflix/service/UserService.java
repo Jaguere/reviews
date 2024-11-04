@@ -2,6 +2,7 @@ package br.com.fiap.api_fiapflix.service;
 
 import br.com.fiap.api_fiapflix.dto.RoleDTO;
 import br.com.fiap.api_fiapflix.dto.UserDTO;
+import br.com.fiap.api_fiapflix.dto.UserInsertDTO;
 import br.com.fiap.api_fiapflix.model.Role;
 import br.com.fiap.api_fiapflix.model.User;
 import br.com.fiap.api_fiapflix.repository.RoleRepository;
@@ -11,6 +12,7 @@ import br.com.fiap.api_fiapflix.service.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,9 @@ public class UserService {
                 .map(UserDTO::new).collect(Collectors.toList());
     }
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Transactional(readOnly = true)
     public UserDTO findById(Long id) {
         User entity = repository.findById(id).orElseThrow(
@@ -42,9 +47,10 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO insert(UserDTO dto) {
+    public UserDTO insert(UserInsertDTO dto) {
         User entity = new User();
         copyDtoToEntity(dto, entity);
+        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
         entity = repository.save(entity);
         return new UserDTO(entity);
     }

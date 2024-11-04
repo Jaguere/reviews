@@ -1,6 +1,7 @@
 package br.com.fiap.api_fiapflix.controller;
 
 import br.com.fiap.api_fiapflix.dto.UserDTO;
+import br.com.fiap.api_fiapflix.dto.UserInsertDTO;
 import br.com.fiap.api_fiapflix.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -33,8 +34,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDTO> insert(@RequestBody @Valid UserDTO dto) {
-        dto = service.insert(dto);
+    public ResponseEntity<UserDTO> insert(@RequestBody @Valid UserInsertDTO dto) {
+        UserDTO newDTO = service.insert(dto);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
